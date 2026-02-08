@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DShare - Home</title>
+    <link rel="stylesheet" href="../css/home.css">
+    <link href='https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css' rel='stylesheet'>
+</head>
+<body>
+
+    <header class="main-header">
+        <div class="header-action-left">
+            <button id="backBtn" class="nav-btn invisible"><i class='bx bx-chevron-left'></i></button>
+        </div>
+        
+        <div class="logo">D<span>Share</span></div>
+
+        <div class="header-action-right">
+            <a href="settings.html" class="nav-btn"><i class='bx bx-cog'></i></a>
+        </div>
+    </header>
+
+    <main class="content-area">
+        <div class="status-bar">
+            <h2 id="viewTitle">Main Vault</h2>
+            <button id="addFolderBtn" class="neon-plus"><i class='bx bx-plus'></i></button>
+        </div>
+
+        <div class="file-grid" id="fileGrid">
+            </div>
+
+        <input type="file" id="fileInput" hidden multiple>
+    </main>
+
+    <nav class="bottom-tab-bar">
+        <a href="send.html" class="tab-item"><i class='bx bx-up-arrow-alt'></i><span>Send</span></a>
+        <a href="receive.html" class="tab-item"><i class='bx bx-down-arrow-alt'></i><span>Receive</span></a>
+        <a href="history.html" class="tab-item"><i class='bx bx-history'></i><span>History</span></a>
+    </nav>
+
+    <script src="../js/home.js"></script>
+</body>
+</html>

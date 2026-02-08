@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DShare - Sign Up</title>
+    <link rel="stylesheet" href="../css/login.css">
+   
+</head>
+<body>
+
+    <div class="login-container">
+        <form id="signupForm">
+            <h2>Create Account</h2>
+            <p>Join DShare to start sharing</p>
+            
+            <div class="input-group">
+                <label for="username">Username</label>
+                <input type="text" id="username" placeholder="name" required>
+            </div>
+
+            <div class="input-group">
+                <label for="email">Gmail</label>
+                <input type="email" id="email" placeholder="example@gmail.com" required>
+            </div>
+
+            <div class="input-group">
+                <label for="phone">Phone Number</label>
+                <input type="tel" id="phone" placeholder="phone" required>
+            </div>
+
+            <div class="input-group">
+                <label for="password">Password</label>
+                <input type="password" id="password" placeholder="Create a strong password" required>
+            </div>
+
+            <button type="submit" id="signupBtn">Sign Up</button>
+            
+            <div class="form-footer">
+                <a href="login.html">Already have an account? Login</a>
+            </div>
+
+            <p id="message"></p> 
+        </form>
+    </div>
+
+    <script src="../js/auth.js"></script>
+</body>
+</html>

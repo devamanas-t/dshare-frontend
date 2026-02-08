@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>dShare - Verify PIN</title>
+    <link rel="stylesheet" href="../css/main.css">
+    <link rel="stylesheet" href="../css/pin.css">
+</head>
+<body>
+
+    <div class="glass-container">
+        <form id="verifyPinForm">
+            <h2>Unlock dShare</h2>
+            <p>Enter your 4-digit secure PIN to continue</p>
+            
+            <div class="input-group">
+                <label>Enter PIN</label>
+                <input type="password" id="verifyPin" placeholder="" maxlength="4" inputmode="numeric" autofocus required>
+            </div>
+
+            <button type="submit" id="unlockBtn">Unlock Now</button>
+            <p id="message"></p>
+        </form>
+    </div>
+
+    <script src="../js/pin.js"></script>
+</body>
+</html>

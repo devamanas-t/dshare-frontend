@@ -1,0 +1,88 @@
+/* General Reset */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: 'Segoe UI', sans-serif;
+}
+
+body {
+    background-color: #0f172a; /* Dark Navy Blue */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    color: white;
+}
+
+.login-container {
+    background-color: #1e293b; /* Lighter Slate Blue */
+    padding: 2rem;
+    border-radius: 12px;
+    box-shadow: 0 10px 25px rgba(0,0,0,0.3);
+    width: 100%;
+    max-width: 400px; /* Limits width on desktop */
+}
+
+/* Responsive adjustment for mobile */
+@media (max-width: 480px) {
+    .login-container {
+        width: 90%;
+        padding: 1.5rem;
+    }
+}
+
+h2 { margin-bottom: 0.5rem; text-align: center; }
+p { color: #94a3b8; font-size: 0.9rem; margin-bottom: 1.5rem; text-align: center; }
+
+.input-group { margin-bottom: 1.2rem; }
+
+label { display: block; margin-bottom: 0.5rem; font-size: 0.85rem; }
+
+input {
+    width: 100%;
+    padding: 0.8rem;
+    border-radius: 6px;
+    border: 1px solid #334155;
+    background-color: #0f172a;
+    color: white;
+    outline: none;
+}
+
+input:focus { border-color: #38bdf8; }
+
+button {
+    width: 100%;
+    padding: 0.8rem;
+    background-color: #38bdf8; /* Sky Blue */
+    color: #0f172a;
+    border: none;
+    border-radius: 6px;
+    font-weight: bold;
+    cursor: pointer;
+    transition: 0.3s;
+}
+
+button:hover { background-color: #7dd3fc; }
+
+#message { margin-top: 1rem; font-size: 0.85rem; text-align: center; }
+
+/* Styling the link container */
+.form-footer {
+    margin-top: 1.5rem; /* Space above the link */
+    text-align: center;  /* Centers the link */
+}
+
+/* Styling the actual link */
+.form-footer a {
+    color: #38bdf8;         /* Matches your button color */
+    text-decoration: none;  /* Removes the default underline */
+    font-size: 0.85rem;
+    transition: 0.3s;       /* Makes the hover effect smooth */
+}
+
+/* What happens when you hover the mouse over it */
+.form-footer a:hover {
+    color: #7dd3fc;         /* Lighter blue on hover */
+    text-decoration: underline; /* Shows underline only when hovering */
+}

@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>dShare - Secure PIN</title>
+    <link rel="stylesheet" href="../css/main.css">
+    <link rel="stylesheet" href="../css/pin.css">
+</head>
+<body>
+
+    <div class="glass-container">
+        <form id="pinForm">
+            <h2>Set Your PIN</h2>
+            <p>Enter a 4-digit secure code</p>
+            
+            <div class="input-group">
+                <label>Create PIN</label>
+                <input type="password" id="pin" placeholder="Enter 4 digits" maxlength="4" inputmode="numeric" required>
+            </div>
+
+            <div class="input-group">
+                <label>Confirm PIN</label>
+                <input type="password" id="confirmPin" placeholder="Re-enter 4 digits" maxlength="4" inputmode="numeric" required>
+            </div>
+
+            <button type="submit" id="savePinBtn">Secure App</button>
+            <p id="message"></p>
+        </form>
+    </div>
+
+    <script src="../js/pin.js"></script>
+</body>
+</html>
