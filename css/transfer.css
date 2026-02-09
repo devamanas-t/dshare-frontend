@@ -1,28 +1,27 @@
 /* =========================================
-   1. BOTTOM DOCK (Unified Look)
+   1. BOTTOM DOCK
    ========================================= */
 .bottom-dock-container {
     position: fixed;
     bottom: 20px;
     left: 50%;
     transform: translateX(-50%);
-    width: 95%; /* Slightly wider to fit 3 big buttons */
+    width: 95%;
     max-width: 500px;
-    background: rgba(20, 20, 25, 0.9); /* Darker background */
+    background: rgba(20, 20, 25, 0.9);
     backdrop-filter: blur(15px);
     border: 1px solid rgba(255, 255, 255, 0.1);
     border-radius: 20px; 
     padding: 10px;
     display: flex;
     justify-content: space-between;
-    gap: 10px; /* Space between buttons */
+    gap: 10px;
     box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
     z-index: 1000;
 }
 
-/* Common Style for ALL Buttons (Send, Receive, History) */
 .dock-btn {
-    flex: 1; /* Makes all 3 buttons equal width */
+    flex: 1;
     display: flex;
     align-items: center;
     justify-content: center;
@@ -33,9 +32,7 @@
     font-size: 14px;
     height: 50px;
     color: white;
-    text-decoration: none; /* Removes underline from History link */
-    
-    /* Unified Gradient for ALL buttons */
+    text-decoration: none;
     background: linear-gradient(135deg, #6366f1, #a855f7);
     border-radius: 12px;
     box-shadow: 0 4px 15px rgba(99, 102, 241, 0.3);
@@ -44,20 +41,17 @@
 
 .dock-btn:hover {
     transform: translateY(-2px);
-    box-shadow: 0 6px 20px rgba(99, 102, 241, 0.5);
     filter: brightness(1.1);
 }
 
-/* Adjust Icon sizes inside buttons */
-.dock-btn svg, 
-.dock-btn i {
+.dock-btn svg, .dock-btn i {
     font-size: 18px;
     width: 18px;
     height: 18px;
 }
 
 /* =========================================
-   2. MODAL SYSTEM
+   2. MODALS
    ========================================= */
 .modal-overlay {
     position: fixed;
@@ -90,14 +84,13 @@
     padding: 25px;
     box-shadow: 0 20px 50px rgba(0, 0, 0, 0.5);
     transform: scale(0.9);
-    transition: transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+    transition: transform 0.3s;
 }
 
 .modal-overlay.open .modal-card {
     transform: scale(1);
 }
 
-/* Header */
 .modal-header {
     display: flex;
     justify-content: space-between;
@@ -107,27 +100,9 @@
     padding-bottom: 15px;
 }
 
-.modal-header h3 {
-    margin: 0;
-    color: white;
-    font-size: 20px;
-}
-
-.close-btn {
-    background: none;
-    border: none;
-    color: #888;
-    font-size: 28px;
-    cursor: pointer;
-    line-height: 1;
-}
-.close-btn:hover { color: white; }
-
-/* Step Animation */
-.step-content {
-    display: none;
-    animation: fadeIn 0.3s ease;
-}
+.modal-header h3 { margin: 0; color: white; font-size: 20px; }
+.close-btn { background: none; border: none; color: #888; font-size: 28px; cursor: pointer; line-height: 1; }
+.step-content { display: none; animation: fadeIn 0.3s ease; }
 .step-content.active { display: block; }
 
 @keyframes fadeIn {
@@ -135,143 +110,93 @@
     to { opacity: 1; transform: translateY(0); }
 }
 
-.step-desc {
-    color: #aaa;
-    margin-bottom: 20px;
-    font-size: 14px;
-}
+.step-desc { color: #aaa; margin-bottom: 20px; font-size: 14px; }
 
 /* =========================================
-   3. UPDATED 8-DIGIT PIN STYLES
+   3. NEW SINGLE INPUT PIN STYLES
    ========================================= */
-.pin-input-group {
-    display: flex;
-    gap: 6px; /* Optimized gap for 8 digits */
-    justify-content: center;
+.pin-wrapper {
+    position: relative;
+    width: 100%;
     margin-bottom: 25px;
-    flex-wrap: nowrap; /* Forces them to stay on one line */
+    cursor: text;
 }
 
-.pin-digit {
-    width: 40px;  /* Increased width so numbers don't fall out */
-    height: 50px;
+/* The invisible input that captures typing */
+#real-pin {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    opacity: 0; /* Hidden */
+    z-index: 10;
+    color: transparent;
+    background: transparent;
+    border: none;
+    caret-color: transparent;
+}
+
+/* The visual boxes */
+.pin-visuals {
+    display: flex;
+    justify-content: center;
+    gap: 8px; /* Gap between boxes */
+}
+
+.pin-box {
+    width: 45px;
+    height: 55px;
     border-radius: 8px;
     border: 1px solid rgba(255, 255, 255, 0.2);
     background: rgba(255, 255, 255, 0.05);
     color: white;
-    font-size: 20px; /* Readable size */
+    font-size: 24px;
     font-weight: bold;
-    text-align: center;
-    padding: 0; /* Removes padding that pushes text out */
-    outline: none;
-    transition: all 0.2s ease;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: 0.2s;
 }
 
-.pin-digit:focus {
+.pin-box.filled {
     border-color: #6366f1;
-    background: rgba(99, 102, 241, 0.15);
-    transform: translateY(-2px);
-    box-shadow: 0 4px 10px rgba(99, 102, 241, 0.3);
+    background: rgba(99, 102, 241, 0.1);
+    box-shadow: 0 0 10px rgba(99, 102, 241, 0.2);
 }
 
 /* =========================================
-   4. FILE LIST & UPLOAD STYLES
+   4. FILE LIST & UPLOAD
    ========================================= */
-.file-selection-list {
-    display: flex;
-    flex-direction: column;
-    gap: 10px;
-    max-height: 200px;
-    overflow-y: auto;
-    margin-bottom: 15px;
-}
-
-.file-item {
-    display: flex;
-    align-items: center;
-    gap: 10px;
-    padding: 10px;
-    background: rgba(255,255,255,0.03);
-    border-radius: 8px;
-    cursor: pointer;
-    transition: 0.2s;
-}
+.file-selection-list { display: flex; flex-direction: column; gap: 10px; max-height: 200px; overflow-y: auto; margin-bottom: 15px; }
+.file-item { display: flex; align-items: center; gap: 10px; padding: 10px; background: rgba(255,255,255,0.03); border-radius: 8px; cursor: pointer; transition: 0.2s; }
 .file-item:hover { background: rgba(255,255,255,0.08); }
 .file-item input { accent-color: #6366f1; }
+.upload-area { border: 2px dashed rgba(255,255,255,0.2); border-radius: 10px; padding: 15px; text-align: center; color: #888; cursor: pointer; margin-bottom: 20px; font-size: 14px; }
+.upload-area:hover { border-color: #6366f1; color: #6366f1; }
 
-.upload-area {
-    border: 2px dashed rgba(255,255,255,0.2);
-    border-radius: 10px;
-    padding: 15px;
-    text-align: center;
-    color: #888;
-    cursor: pointer;
-    margin-bottom: 20px;
-    font-size: 14px;
-}
-.upload-area:hover {
-    border-color: #6366f1;
-    color: #6366f1;
-}
-
-/* Modal Action Buttons */
-.modal-action-btn {
-    width: 100%;
-    padding: 12px;
-    border-radius: 8px;
-    border: none;
-    font-weight: bold;
-    cursor: pointer;
-    background: white;
-    color: black;
-    transition: 0.2s;
-}
-.modal-action-btn.success {
-    background: #6366f1;
-    color: white;
-}
-.modal-action-btn:hover { opacity: 0.9; }
-
-.modal-footer {
-    display: flex;
-    gap: 10px;
-}
-.text-btn {
-    background: none;
-    border: none;
-    color: #888;
-    cursor: pointer;
-}
-.text-btn:hover { color: white; }
+.modal-action-btn { width: 100%; padding: 12px; border-radius: 8px; border: none; font-weight: bold; cursor: pointer; background: white; color: black; transition: 0.2s; }
+.modal-action-btn.success { background: #6366f1; color: white; }
+.modal-footer { display: flex; gap: 10px; }
+.text-btn { background: none; border: none; color: #888; cursor: pointer; }
 
 /* =========================================
-   5. INCOMING / RECEIVE STYLES
+   5. HISTORY & INCOMING
    ========================================= */
-.incoming-item {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding: 15px;
-    background: rgba(255,255,255,0.05);
-    border-radius: 10px;
-    margin-bottom: 10px;
+.history-list, .receive-list { display: flex; flex-direction: column; gap: 10px; max-height: 300px; overflow-y: auto; }
+
+.history-item, .incoming-item {
+    display: flex; align-items: center; gap: 15px; padding: 12px;
+    background: rgba(255, 255, 255, 0.03); border-radius: 12px;
+    border: 1px solid rgba(255, 255, 255, 0.05);
 }
+
+.history-icon { width: 40px; height: 40px; border-radius: 50%; display: flex; justify-content: center; align-items: center; font-size: 20px; flex-shrink: 0; }
+.history-icon.sent { background: rgba(168, 85, 247, 0.2); color: #a855f7; }
+.history-icon.received { background: rgba(16, 185, 129, 0.2); color: #10b981; }
+
+.item-info { flex: 1; }
 .item-info h4 { margin: 0; font-size: 14px; color: white; }
-.item-info p { margin: 2px 0 0; font-size: 12px; color: #888; }
-
-.accept-btn {
-    background: #10b981;
-    color: white;
-    border: none;
-    padding: 5px 12px;
-    border-radius: 5px;
-    font-size: 12px;
-    cursor: pointer;
-}
-
-.empty-state { 
-    text-align: center; 
-    color: #555; 
-    font-size: 13px; 
-    margin-top: 20px; 
-}
+.item-info p { margin: 2px 0 0; font-size: 11px; color: #888; }
+.status-text { font-size: 11px; color: #666; font-weight: 600; }
+.empty-state { text-align: center; color: #555; font-size: 13px; margin-top: 20px; }
