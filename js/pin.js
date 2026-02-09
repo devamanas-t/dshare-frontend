@@ -26,8 +26,8 @@ if (pinForm) {
 
             // Move to home page
             setTimeout(() => {
-                window.location.href = "../pages/home.html";
-            }, 1500);
+                window.location.href = "../pages/verify-pin.html";
+            }, 500);
         } else {
             // Error: They don't match
             messageBox.textContent = "PINs do not match! Try again.";
@@ -59,7 +59,7 @@ if (verifyForm) {
 
             // Move to the dashboard/home page
             setTimeout(() => {
-                window.location.href = "home.html";
+                window.location.href = "../pages/home.html";
             }, 1000);
         } else {
             // Wrong PIN
