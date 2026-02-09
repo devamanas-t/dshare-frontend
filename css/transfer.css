@@ -1,0 +1,277 @@
+/* =========================================
+   1. BOTTOM DOCK (Unified Look)
+   ========================================= */
+.bottom-dock-container {
+    position: fixed;
+    bottom: 20px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 95%; /* Slightly wider to fit 3 big buttons */
+    max-width: 500px;
+    background: rgba(20, 20, 25, 0.9); /* Darker background */
+    backdrop-filter: blur(15px);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 20px; 
+    padding: 10px;
+    display: flex;
+    justify-content: space-between;
+    gap: 10px; /* Space between buttons */
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+    z-index: 1000;
+}
+
+/* Common Style for ALL Buttons (Send, Receive, History) */
+.dock-btn {
+    flex: 1; /* Makes all 3 buttons equal width */
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    border: none;
+    cursor: pointer;
+    font-weight: 600;
+    font-size: 14px;
+    height: 50px;
+    color: white;
+    text-decoration: none; /* Removes underline from History link */
+    
+    /* Unified Gradient for ALL buttons */
+    background: linear-gradient(135deg, #6366f1, #a855f7);
+    border-radius: 12px;
+    box-shadow: 0 4px 15px rgba(99, 102, 241, 0.3);
+    transition: transform 0.2s, box-shadow 0.2s;
+}
+
+.dock-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(99, 102, 241, 0.5);
+    filter: brightness(1.1);
+}
+
+/* Adjust Icon sizes inside buttons */
+.dock-btn svg, 
+.dock-btn i {
+    font-size: 18px;
+    width: 18px;
+    height: 18px;
+}
+
+/* =========================================
+   2. MODAL SYSTEM
+   ========================================= */
+.modal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.6);
+    backdrop-filter: blur(5px);
+    z-index: 2000;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    opacity: 0;
+    visibility: hidden;
+    transition: opacity 0.3s ease;
+}
+
+.modal-overlay.open {
+    opacity: 1;
+    visibility: visible;
+}
+
+.modal-card {
+    width: 90%;
+    max-width: 450px;
+    background: rgba(20, 20, 25, 0.95);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 20px;
+    padding: 25px;
+    box-shadow: 0 20px 50px rgba(0, 0, 0, 0.5);
+    transform: scale(0.9);
+    transition: transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+.modal-overlay.open .modal-card {
+    transform: scale(1);
+}
+
+/* Header */
+.modal-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+    border-bottom: 1px solid rgba(255,255,255,0.1);
+    padding-bottom: 15px;
+}
+
+.modal-header h3 {
+    margin: 0;
+    color: white;
+    font-size: 20px;
+}
+
+.close-btn {
+    background: none;
+    border: none;
+    color: #888;
+    font-size: 28px;
+    cursor: pointer;
+    line-height: 1;
+}
+.close-btn:hover { color: white; }
+
+/* Step Animation */
+.step-content {
+    display: none;
+    animation: fadeIn 0.3s ease;
+}
+.step-content.active { display: block; }
+
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(10px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+.step-desc {
+    color: #aaa;
+    margin-bottom: 20px;
+    font-size: 14px;
+}
+
+/* =========================================
+   3. UPDATED 8-DIGIT PIN STYLES
+   ========================================= */
+.pin-input-group {
+    display: flex;
+    gap: 6px; /* Optimized gap for 8 digits */
+    justify-content: center;
+    margin-bottom: 25px;
+    flex-wrap: nowrap; /* Forces them to stay on one line */
+}
+
+.pin-digit {
+    width: 40px;  /* Increased width so numbers don't fall out */
+    height: 50px;
+    border-radius: 8px;
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    background: rgba(255, 255, 255, 0.05);
+    color: white;
+    font-size: 20px; /* Readable size */
+    font-weight: bold;
+    text-align: center;
+    padding: 0; /* Removes padding that pushes text out */
+    outline: none;
+    transition: all 0.2s ease;
+}
+
+.pin-digit:focus {
+    border-color: #6366f1;
+    background: rgba(99, 102, 241, 0.15);
+    transform: translateY(-2px);
+    box-shadow: 0 4px 10px rgba(99, 102, 241, 0.3);
+}
+
+/* =========================================
+   4. FILE LIST & UPLOAD STYLES
+   ========================================= */
+.file-selection-list {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    max-height: 200px;
+    overflow-y: auto;
+    margin-bottom: 15px;
+}
+
+.file-item {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 10px;
+    background: rgba(255,255,255,0.03);
+    border-radius: 8px;
+    cursor: pointer;
+    transition: 0.2s;
+}
+.file-item:hover { background: rgba(255,255,255,0.08); }
+.file-item input { accent-color: #6366f1; }
+
+.upload-area {
+    border: 2px dashed rgba(255,255,255,0.2);
+    border-radius: 10px;
+    padding: 15px;
+    text-align: center;
+    color: #888;
+    cursor: pointer;
+    margin-bottom: 20px;
+    font-size: 14px;
+}
+.upload-area:hover {
+    border-color: #6366f1;
+    color: #6366f1;
+}
+
+/* Modal Action Buttons */
+.modal-action-btn {
+    width: 100%;
+    padding: 12px;
+    border-radius: 8px;
+    border: none;
+    font-weight: bold;
+    cursor: pointer;
+    background: white;
+    color: black;
+    transition: 0.2s;
+}
+.modal-action-btn.success {
+    background: #6366f1;
+    color: white;
+}
+.modal-action-btn:hover { opacity: 0.9; }
+
+.modal-footer {
+    display: flex;
+    gap: 10px;
+}
+.text-btn {
+    background: none;
+    border: none;
+    color: #888;
+    cursor: pointer;
+}
+.text-btn:hover { color: white; }
+
+/* =========================================
+   5. INCOMING / RECEIVE STYLES
+   ========================================= */
+.incoming-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 15px;
+    background: rgba(255,255,255,0.05);
+    border-radius: 10px;
+    margin-bottom: 10px;
+}
+.item-info h4 { margin: 0; font-size: 14px; color: white; }
+.item-info p { margin: 2px 0 0; font-size: 12px; color: #888; }
+
+.accept-btn {
+    background: #10b981;
+    color: white;
+    border: none;
+    padding: 5px 12px;
+    border-radius: 5px;
+    font-size: 12px;
+    cursor: pointer;
+}
+
+.empty-state { 
+    text-align: center; 
+    color: #555; 
+    font-size: 13px; 
+    margin-top: 20px; 
+}
