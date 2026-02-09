@@ -1,0 +1,258 @@
+/* --- Reset and Base Styles --- */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+body {
+    background-color: #050505;
+    color: white;
+    min-height: 100vh; /* changed from height to min-height for mobile scrolling */
+    overflow-x: hidden; /* Only hide horizontal overflow */
+    display: flex;
+    flex-direction: column;
+}
+
+/* --- Navigation --- */
+nav {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 20px 5% 0; /* Use % for responsiveness */
+    z-index: 100;
+    width: 100%;
+}
+
+.logo {
+    font-size: 28px;
+    font-weight: 800;
+    letter-spacing: -1px;
+    background: linear-gradient(90deg, #fff, #818cf8);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    cursor: pointer;
+}
+
+.nav-links {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+}
+
+/* Nav Link Styling */
+.btn-login {
+    text-decoration: none;
+    color: #aaa;
+    font-weight: 500;
+    font-size: 16px;
+    transition: all 0.3s ease;
+    padding: 8px 16px;
+    border-radius: 8px;
+}
+/* Login Hover Effect */
+.btn-login:hover { 
+    color: white; 
+    background-color: rgba(255, 255, 255, 0.05);
+}
+
+/* Sign Up Button Styling */
+.btn-signup {
+    text-decoration: none;
+    background: #4f46e5;
+    color: white;
+    padding: 10px 24px;
+    border-radius: 50px;
+    font-weight: 600;
+    font-size: 15px;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    box-shadow: 0 4px 15px rgba(79, 70, 229, 0.3);
+}
+/* Sign Up Hover Effect */
+.btn-signup:hover {
+    background: #6366f1;
+    transform: translateY(-2px) scale(1.05);
+    box-shadow: 0 8px 25px rgba(99, 102, 241, 0.5);
+}
+
+/* --- Hero Section --- */
+.hero-container {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    padding: 0 5%;
+    position: relative;
+    z-index: 10;
+    width: 100%;
+}
+
+.content {
+    max-width: 600px;
+    margin-top: -50px; /* Slight visual offset upwards */
+}
+
+h1 {
+    font-size: clamp(40px, 5vw, 72px); /* Responsive Font Size */
+    line-height: 1.1;
+    margin-bottom: 24px;
+    font-weight: 700;
+}
+
+h1 span {
+    color: #6366f1;
+    background: linear-gradient(120deg, #6366f1, #a855f7);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+}
+
+p {
+    color: #94a3b8;
+    font-size: clamp(16px, 2vw, 20px);
+    margin-bottom: 40px;
+    line-height: 1.6;
+    max-width: 90%;
+}
+
+.buttons {
+    display: flex;
+    gap: 16px;
+    flex-wrap: wrap;
+}
+
+/* Main CTA Button */
+.cta-button {
+    text-decoration: none;
+    background: white;
+    color: #0f172a;
+    padding: 16px 40px;
+    border-radius: 50px;
+    font-weight: 700;
+    font-size: 16px;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    display: inline-block;
+}
+/* CTA Hover Effect */
+.cta-button:hover {
+    transform: translateY(-3px) scale(1.02);
+    box-shadow: 0 10px 30px rgba(255, 255, 255, 0.2);
+    background-color: #f8fafc;
+}
+
+/* Secondary Button */
+.secondary-button {
+    text-decoration: none;
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    color: white;
+    padding: 16px 40px;
+    border-radius: 50px;
+    font-weight: 600;
+    font-size: 16px;
+    background: rgba(255, 255, 255, 0.03);
+    backdrop-filter: blur(10px);
+    transition: all 0.3s ease;
+    display: inline-block;
+}
+/* Secondary Hover Effect */
+.secondary-button:hover {
+    background: rgba(255, 255, 255, 0.1);
+    border-color: rgba(255, 255, 255, 0.5);
+    transform: translateY(-3px);
+}
+
+/* --- The 3D CSS Background --- */
+.scene {
+    position: absolute;
+    top: 50%;
+    right: -5%; /* Positioned on the right for desktop */
+    transform: translateY(-50%);
+    width: 600px;
+    height: 600px;
+    perspective: 1000px;
+    z-index: 1;
+    opacity: 0.8;
+    pointer-events: none; /* Allows clicking through the globe */
+}
+
+.globe {
+    width: 100%;
+    height: 100%;
+    position: relative;
+    transform-style: preserve-3d;
+    animation: spin 25s linear infinite;
+}
+
+/* Globe Circles */
+.circle, .circle-hor {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    border: 1px solid rgba(99, 102, 241, 0.4);
+    border-radius: 50%;
+    box-shadow: 0 0 20px rgba(99, 102, 241, 0.1); /* Glow effect */
+}
+
+/* Rotations for 3D effect */
+.circle:nth-child(1) { transform: rotateY(0deg); }
+.circle:nth-child(2) { transform: rotateY(60deg); }
+.circle:nth-child(3) { transform: rotateY(120deg); }
+.circle:nth-child(4) { transform: rotateY(90deg); }
+
+.circle-hor:nth-child(5) { transform: rotateX(90deg) scale(0.6); }
+.circle-hor:nth-child(6) { transform: rotateX(90deg); }
+
+@keyframes spin {
+    0% { transform: rotateY(0deg) rotateX(20deg); }
+    100% { transform: rotateY(360deg) rotateX(20deg); }
+}
+
+/* --- RESPONSIVE DESIGN (Mobile) --- */
+@media (max-width: 768px) {
+    body {
+        height: auto;
+        overflow-y: auto;
+    }
+
+    nav {
+        padding: 20px 20px;
+    }
+
+    .hero-container {
+        flex-direction: column;
+        justify-content: center;
+        text-align: center;
+        padding: 60px 20px;
+    }
+
+    .content {
+        margin-top: 0;
+        z-index: 20; /* Ensure text is above globe */
+    }
+
+    p {
+        margin-left: auto;
+        margin-right: auto;
+    }
+
+    .buttons {
+        justify-content: center;
+        flex-direction: column;
+        width: 100%;
+    }
+
+    .cta-button, .secondary-button {
+        width: 100%; /* Full width buttons on mobile */
+        text-align: center;
+    }
+
+    /* Adjust 3D Globe for Mobile */
+    .scene {
+        width: 350px;
+        height: 350px;
+        top: 30%; /* Move it up */
+        left: 50%;
+        right: auto;
+        transform: translate(-50%, -50%);
+        opacity: 0.3; /* Fade it out so text is readable */
+    }
+}
