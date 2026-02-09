@@ -74,8 +74,8 @@ if (signupForm) {
 
             // Redirect to login after 2 seconds
             setTimeout(() => {
-                window.location.href = "../pages/verify-pin.html";
-            }, 2000);
+                window.location.href = "../pages/set-pin.html";
+            }, 1000);
         }
 
     });
