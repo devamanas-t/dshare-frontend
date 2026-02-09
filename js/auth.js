@@ -18,6 +18,10 @@ if (loginForm) {
 
             messageBox.textContent = "Login Successful! Redirecting...";
             messageBox.style.color = "#4ade80";
+             // Redirect to login after 2 seconds
+            setTimeout(() => {
+                window.location.href = "../pages/set-pin.html";
+            }, 2000);
 
         } else {
 
