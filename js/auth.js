@@ -20,7 +20,7 @@ if (loginForm) {
             messageBox.style.color = "#4ade80";
              // Redirect to login after 2 seconds
             setTimeout(() => {
-                window.location.href = "../pages/set-pin.html";
+                window.location.href = "../pages/verify-pin.html";
             }, 2000);
 
         } else {
