@@ -5,15 +5,16 @@
             box-sizing: border-box;
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
         }
-
-        body {
+body {
             background-color: #050505;
             color: white;
-            height: 100vh;
+            /* FIX 1: Use min-height so it can stretch if needed */
+            /* Using dvh (dynamic viewport height) handles mobile keyboards much better */
+            min-height: 100dvh; 
             display: flex;
             justify-content: center;
             align-items: center;
-            overflow: hidden;
+            /* FIX 2: Removed overflow: hidden so the page can adjust when the keyboard opens */
             position: relative;
         }
 

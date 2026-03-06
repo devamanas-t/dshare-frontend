@@ -6,6 +6,7 @@ import {
     signInWithPopup
 } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
 
+// --- FIREBASE CONFIG ---
 const firebaseConfig = {
     apiKey: "AIzaSyD9Lg1F26zRxomTIKoIbCvAx-43JQ5ZR4A",
     authDomain: "d-share-ddd8f.firebaseapp.com",
@@ -19,60 +20,67 @@ const firebaseConfig = {
 const app = initializeApp(firebaseConfig);
 const auth = getAuth(app);
 
+// --- DOM ELEMENTS ---
 const form = document.getElementById("signupForm");
 const message = document.getElementById("message");
-
-// --- Email & Password Sign Up ---
-form.addEventListener("submit", (e) => {
-    e.preventDefault();
-
-    const email = document.getElementById("email").value;
-    const password = document.getElementById("password").value;
-
-    createUserWithEmailAndPassword(auth, email, password)
-        .then((userCredential) => {
-            // Success Block
-            console.log("Successfully created user:", userCredential.user);
-            
-            message.style.color = "#4ade80"; // Green text for success
-            message.innerText = "Account created successfully! Redirecting to login...";
-            
-            // 2-second delay so the user can read the message before jumping pages
-            setTimeout(() => {
-                window.location.href = "login.html";
-            }, 2000);
-        })
-        .catch((error) => {
-            // Error Block
-            console.error("Firebase Auth Error:", error.code, error.message);
-            
-            message.style.color = "#ef4444"; // Red text for errors
-            
-            // Provide cleaner error messages for common issues
-            if (error.code === 'auth/email-already-in-use') {
-                message.innerText = "An account with this email already exists.";
-            } else if (error.code === 'auth/weak-password') {
-                message.innerText = "Password is too weak. It must be at least 6 characters.";
-            } else {
-                message.innerText = error.message; 
-            }
-        });
-});
-
-// --- Google Sign Up ---
-const provider = new GoogleAuthProvider();
 const googleBtn = document.getElementById("googleSignup");
 
-// Using addEventListener is generally safer than onclick
-googleBtn.addEventListener("click", () => {
-    signInWithPopup(auth, provider)
-        .then((result) => {
-            console.log("Google Sign-In Success:", result.user);
-            window.location.href = "home.html";
-        })
-        .catch((error) => {
-            console.error("Google Auth Error:", error.code, error.message);
-            message.style.color = "#ef4444";
-            message.innerText = error.message;
-        });
-});
+// --- EMAIL & PASSWORD SIGN UP ---
+if (form) {
+    form.addEventListener("submit", (e) => {
+        e.preventDefault();
+
+        const email = document.getElementById("email").value;
+        const password = document.getElementById("password").value;
+        
+        // Disable button to prevent multiple clicks
+        const submitBtn = form.querySelector('button[type="submit"]');
+        if(submitBtn) submitBtn.disabled = true;
+
+        createUserWithEmailAndPassword(auth, email, password)
+            .then((userCredential) => {
+                console.log("Successfully created user:", userCredential.user);
+                message.style.color = "#4ade80"; // Green
+                message.innerText = "Account created! Taking you to login...";
+                
+                // Redirect immediately after 1.5 seconds
+                setTimeout(() => {
+                    window.location.href = "login.html";
+                }, 1500);
+            })
+            .catch((error) => {
+                console.error("Firebase Auth Error:", error.code, error.message);
+                message.style.color = "#ef4444"; // Red
+                
+                // Friendly error messages
+                if (error.code === 'auth/email-already-in-use') {
+                    message.innerText = "An account with this email already exists.";
+                } else if (error.code === 'auth/weak-password') {
+                    message.innerText = "Password must be at least 6 characters.";
+                } else {
+                    message.innerText = error.message; 
+                }
+                
+                // Re-enable button
+                if(submitBtn) submitBtn.disabled = false;
+            });
+    });
+}
+
+// --- GOOGLE SIGN UP ---
+if (googleBtn) {
+    const provider = new GoogleAuthProvider();
+    googleBtn.addEventListener("click", () => {
+        signInWithPopup(auth, provider)
+            .then((result) => {
+                console.log("Google Sign-In Success:", result.user);
+                // Redirecting to login after Google sign up, just like email
+                window.location.href = "login.html"; 
+            })
+            .catch((error) => {
+                console.error("Google Auth Error:", error.code, error.message);
+                message.style.color = "#ef4444";
+                message.innerText = error.message;
+            });
+    });
+}
