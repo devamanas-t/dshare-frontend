@@ -1,0 +1,210 @@
+/* --- Base Styles --- */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+body {
+    background-color: #050505;
+    color: white;
+    min-height: 100dvh; 
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    position: relative;
+    padding: 30px 20px; 
+    overflow-x: hidden;
+}
+
+/* --- Animated Ambient Neon Glows (Flipped for Signup) --- */
+body::before, body::after {
+    content: "";
+    position: absolute;
+    pointer-events: none; 
+    z-index: 0;
+    border-radius: 50%;
+    animation: floatSignup 9s infinite alternate ease-in-out;
+}
+
+body::before {
+    width: 450px;
+    height: 450px;
+    background: #a855f7; /* Purple top right this time */
+    filter: blur(120px);
+    opacity: 0.35;
+    top: -5%;
+    right: -10%;
+}
+
+body::after {
+    width: 400px;
+    height: 400px;
+    background: #6366f1; /* Blue bottom left */
+    filter: blur(110px);
+    opacity: 0.4;
+    bottom: -10%;
+    left: -5%;
+    animation-delay: -3s;
+}
+
+@keyframes floatSignup {
+    0% { transform: translate(0, 0) scale(1); }
+    100% { transform: translate(-30px, 20px) scale(1.15); }
+}
+
+/* --- Glassmorphism Container --- */
+.login-container {
+    background: rgba(20, 20, 25, 0.45); 
+    backdrop-filter: blur(25px); 
+    -webkit-backdrop-filter: blur(25px); 
+    border: 1px solid rgba(255, 255, 255, 0.15); 
+    padding: 40px 40px;
+    border-radius: 24px;
+    width: 100%;
+    max-width: 450px;
+    z-index: 10;
+    box-shadow: 0 20px 50px rgba(0, 0, 0, 0.8), 
+                inset 0 0 20px rgba(168, 85, 247, 0.1);
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.login-container:hover {
+    box-shadow: 0 25px 60px rgba(0, 0, 0, 0.9), 
+                0 0 30px rgba(168, 85, 247, 0.2) inset;
+}
+
+#signupForm {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+}
+
+.header-text {
+    text-align: center;
+    margin-bottom: 10px;
+}
+
+h2 {
+    font-size: 32px;
+    font-weight: 800;
+    margin-bottom: 5px;
+    background: linear-gradient(120deg, #ffffff, #e9d5ff);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+}
+
+.header-text p {
+    color: #cbd5e1;
+    font-size: 14px;
+}
+
+/* --- Form Inputs --- */
+.input-group {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+}
+
+label {
+    font-size: 13px;
+    font-weight: 500;
+    color: #a5b4fc;
+    margin-left: 4px;
+}
+
+input {
+    width: 100%;
+    padding: 14px 18px;
+    background: rgba(255, 255, 255, 0.03); 
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 10px;
+    color: white;
+    font-size: 15px;
+    transition: all 0.3s ease;
+    outline: none;
+}
+
+input:focus, input:hover {
+    background: rgba(255, 255, 255, 0.08);
+    border-color: #a855f7;
+    box-shadow: 0 0 15px rgba(168, 85, 247, 0.4), 
+                inset 0 0 5px rgba(168, 85, 247, 0.2);
+    transform: translateX(3px); /* Gentle slide instead of lift for forms */
+}
+
+input::placeholder { color: #64748b; }
+
+/* --- Buttons --- */
+button {
+    width: 100%;
+    padding: 15px;
+    border: none;
+    border-radius: 12px;
+    font-size: 16px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    margin-top: 5px;
+}
+
+#signupBtn {
+    background: linear-gradient(135deg, #a855f7, #6366f1);
+    color: white;
+    box-shadow: 0 4px 15px rgba(168, 85, 247, 0.3);
+}
+
+#signupBtn:hover {
+    background: linear-gradient(135deg, #b066ff, #818cf8);
+    transform: translateY(-3px) scale(1.02);
+    box-shadow: 0 10px 30px rgba(168, 85, 247, 0.6), 0 0 15px rgba(99, 102, 241, 0.5);
+}
+
+.google-btn {
+    background: rgba(255, 255, 255, 0.05);
+    color: white;
+    border: 1px solid rgba(255, 255, 255, 0.15);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 12px;
+}
+
+.google-btn:hover {
+    background: rgba(255, 255, 255, 0.1);
+    border-color: rgba(255, 255, 255, 0.4);
+    box-shadow: 0 5px 20px rgba(255, 255, 255, 0.15);
+    transform: translateY(-2px);
+}
+
+/* --- Footer & Message --- */
+.form-footer {
+    text-align: center;
+    margin-top: 10px;
+}
+
+.form-footer a {
+    color: #e9d5ff;
+    text-decoration: none;
+    font-size: 14px;
+    font-weight: 500;
+    transition: all 0.3s ease;
+}
+
+.form-footer a:hover {
+    color: #ffffff;
+    text-shadow: 0 0 10px rgba(233, 213, 255, 0.8);
+}
+
+#message {
+    text-align: center;
+    font-size: 14px;
+    min-height: 20px;
+    color: #fb7185; /* Soft red for errors */
+}
+
+@media (max-width: 480px) {
+    .login-container { padding: 35px 24px; }
+    h2 { font-size: 28px; }
+}
