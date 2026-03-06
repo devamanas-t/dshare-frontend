@@ -86,26 +86,12 @@
             </div>
 
             <div id="send-step-2" class="step-content">
-                <p class="step-desc">Select from your folders or attach new files.</p>
+                <p class="step-desc">Select files or folders to send.</p>
                 
                 <div class="file-selection-list">
-                    <label class="file-item">
-                        <input type="checkbox">
-                        <span class="icon">📁</span>
-                        <span class="name">Project Alpha</span>
-                    </label>
-                    <label class="file-item">
-                        <input type="checkbox">
-                        <span class="icon">📄</span>
-                        <span class="name">Design_v2.fig</span>
-                    </label>
-                </div>
+                    </div>
 
-                <div class="upload-area">
-                    <span>+ Attach External File</span>
-                </div>
-
-                <div class="modal-footer">
+                <div class="modal-footer" style="margin-top: 20px;">
                     <button class="text-btn" onclick="prevStep()">Back</button>
                     <button class="modal-action-btn success">Send Now</button>
                 </div>
@@ -132,23 +118,7 @@
                 <button class="close-btn" onclick="closeModal('historyModal')">&times;</button>
             </div>
             <div class="history-list">
-                <div class="history-item">
-                    <div class="history-icon sent"><i class='bx bx-up-arrow-alt'></i></div>
-                    <div class="item-info">
-                        <h4>Design_v2.fig</h4>
-                        <p>Sent • 2 mins ago</p>
-                    </div>
-                    <span class="status-text">Done</span>
                 </div>
-                <div class="history-item">
-                    <div class="history-icon received"><i class='bx bx-down-arrow-alt'></i></div>
-                    <div class="item-info">
-                        <h4>Photo_Pack.zip</h4>
-                        <p>Received • 1 hr ago</p>
-                    </div>
-                    <span class="status-text">Saved</span>
-                </div>
-            </div>
         </div>
     </div>
 
@@ -231,6 +201,7 @@
             100% { transform: translateX(0); }
         }
     </style>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <script src="../js/home.js"></script>
 </body>
 </html>

@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DShare - Settings</title>
+    <link rel="stylesheet" href="../css/home.css">
+    <link href='https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css' rel='stylesheet'>
+    <style>
+        .settings-container { padding: 30px 20px; text-align: center; color: white; }
+        .id-card { background: #1e1e24; border: 1px solid #333; border-radius: 12px; padding: 30px; margin-top: 20px; }
+        .my-id { font-size: 48px; letter-spacing: 5px; color: #6366f1; font-weight: bold; margin: 20px 0; }
+        .copy-btn { background: #6366f1; color: white; border: none; padding: 10px 20px; border-radius: 8px; cursor: pointer; }
+    </style>
+</head>
+<body>
+    <header class="main-header">
+        <div class="header-action-left">
+            <a href="index.html" class="nav-btn"><i class='bx bx-chevron-left'></i></a>
+        </div>
+        <div class="logo">Settings</div>
+        <div class="header-action-right"></div>
+    </header>
+
+    <main class="content-area settings-container">
+        <div class="id-card">
+            <h3>Your Unique DShare ID</h3>
+            <p style="color: #aaa; font-size: 14px; margin-top: 10px;">Give this ID to others so they can send you files.</p>
+            <div class="my-id" id="displayId">------</div>
+            <button class="copy-btn" onclick="copyId()">Copy ID</button>
+        </div>
+    </main>
+
+    <script>
+        // Generate or fetch the user's ID
+        let myUserId = localStorage.getItem('dshare_user_id');
+        if (!myUserId) {
+            myUserId = Math.floor(100000 + Math.random() * 900000).toString();
+            localStorage.setItem('dshare_user_id', myUserId);
+        }
+        
+        document.getElementById('displayId').innerText = myUserId;
+
+        function copyId() {
+            navigator.clipboard.writeText(myUserId);
+            alert("ID Copied to clipboard!");
+        }
+    </script>
+</body>
+</html>

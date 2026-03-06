@@ -1,3 +1,6 @@
+import { app } from "./firebase.js";
+
+console.log("Firebase connected:", app);
 document.addEventListener('mousemove', (e) => {
     const scene = document.querySelector('.scene');
     
