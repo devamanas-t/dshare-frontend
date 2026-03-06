@@ -1,8 +1,6 @@
 // --- SECURITY CHECK ---
-// Grab the Firebase ID we saved during login
 const firebaseUid = localStorage.getItem('firebase_uid');
 if (!firebaseUid) {
-    // If they aren't logged in, kick them back to the login page!
     window.location.href = "login.html";
 }
 
@@ -61,7 +59,6 @@ window.handleCtxAction = async (action) => {
             await supabaseClient.from('vault_items').update({ parent: currentFolderId }).eq('id', clipboard.item.id);
             clipboard = null; 
         } else if(clipboard.action === 'copy') {
-            // NEW: Added user_id
             await supabaseClient.from('vault_items').insert([{
                 name: clipboard.item.name, type: clipboard.item.type, parent: currentFolderId, file_path: clipboard.item.file_path, user_id: firebaseUid
             }]);
@@ -81,9 +78,8 @@ document.querySelector('.content-area').addEventListener('contextmenu', (e) => {
     ctxMenu.style.display = 'flex';
 });
 
-// --- FETCH & RENDER (NOW ISOLATED PER USER) ---
+// --- FETCH & RENDER ---
 async function fetchVaultData() {
-    // NEW: Only fetch files where user_id matches the logged-in user
     const { data, error } = await supabaseClient
         .from('vault_items')
         .select('*')
@@ -128,7 +124,6 @@ function render() {
 addFolderBtn.onclick = async () => {
     if (currentFolderId === null) {
         const name = prompt("Folder Name:");
-        // NEW: Added user_id
         if (name) { await supabaseClient.from('vault_items').insert([{ name: name, type: 'folder', parent: null, user_id: firebaseUid }]); fetchVaultData(); }
     } else { fileInput.click(); }
 };
@@ -138,13 +133,35 @@ fileInput.onchange = async (e) => {
     for (let file of e.target.files) {
         const filePath = `${Date.now()}-${file.name}`;
         const { error } = await supabaseClient.storage.from('vault').upload(filePath, file);
-        // NEW: Added user_id
         if (!error) await supabaseClient.from('vault_items').insert([{ name: file.name, type: 'file', parent: currentFolderId, file_path: filePath, user_id: firebaseUid }]);
     }
     e.target.value = ''; fetchVaultData();
 };
 
 backBtn.onclick = () => { currentFolderId = null; viewTitle.innerText = "Main Vault"; backBtn.classList.add('invisible'); render(); };
+
+// --- RECURSIVE FOLDER COPY ENGINE ---
+// This digs into a folder and copies everything inside it
+async function copyFolderContents(oldParentId, newParentId, userId) {
+    const { data: children } = await supabaseClient.from('vault_items').select('*').eq('parent', oldParentId);
+    
+    if (!children || children.length === 0) return;
+
+    for (let child of children) {
+        const { data: newChild } = await supabaseClient.from('vault_items').insert([{
+            name: child.name, 
+            type: child.type, 
+            parent: newParentId, 
+            file_path: child.file_path, 
+            user_id: userId
+        }]).select();
+
+        // If the child we just copied is also a folder, loop again to get its contents!
+        if (child.type === 'folder' && newChild) {
+            await copyFolderContents(child.id, newChild[0].id, userId);
+        }
+    }
+}
 
 // --- MODALS & TRANSFER LOGIC ---
 const originalOpenModal = window.openModal;
@@ -173,7 +190,6 @@ window.openModal = async (modalId) => {
             
             if (hasLooseFiles) {
                 const folderName = `Received from ${senderId}`;
-                // NEW: Added user_id
                 const { data: newFolder } = await supabaseClient.from('vault_items')
                     .insert([{ name: folderName, type: 'folder', parent: currentFolderId, user_id: firebaseUid }])
                     .select();
@@ -187,12 +203,16 @@ window.openModal = async (modalId) => {
                 
                 const targetParent = item.type === 'file' ? receivedFolderId : currentFolderId;
                 
-                // NEW: Added user_id
-                await supabaseClient.from('vault_items').insert([{
+                // NEW: Use .select() so we know the new ID of the cloned folder
+                const { data: copiedItem } = await supabaseClient.from('vault_items').insert([{
                     name: item.name, type: item.type, parent: targetParent, file_path: item.file_path, user_id: firebaseUid
-                }]);
+                }]).select();
                 
-                // NEW: Added user_id to history
+                // NEW: If it's a folder, run the copy engine to get all its inner files
+                if (item.type === 'folder' && copiedItem) {
+                    await copyFolderContents(item.id, copiedItem[0].id, firebaseUid);
+                }
+                
                 await supabaseClient.from('transfer_history').insert([{ file_name: item.name, action: 'received', user_id: firebaseUid }]);
                 await supabaseClient.from('active_shares').delete().eq('id', share.id);
                 
@@ -208,7 +228,6 @@ window.openModal = async (modalId) => {
     
     // History Modal
     if(modalId === 'historyModal') {
-        // NEW: Only fetch history for the logged-in user
         const { data } = await supabaseClient.from('transfer_history').select('*').eq('user_id', firebaseUid).order('created_at', { ascending: false });
         const list = document.querySelector('.history-list');
         list.innerHTML = data && data.length ? '' : '<p class="empty-state">No history yet.</p>';
@@ -271,7 +290,6 @@ document.addEventListener('DOMContentLoaded', () => {
                     receiver_id: receiverId, 
                     item_id: itemId 
                 }]);
-                // NEW: Added user_id to history
                 await supabaseClient.from('transfer_history').insert([{ file_name: item.name, action: 'sent', user_id: firebaseUid }]);
             }
             
