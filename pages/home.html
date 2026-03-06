@@ -25,13 +25,24 @@
     <main class="content-area">
         <div class="status-bar">
             <h2 id="viewTitle">Main Vault</h2>
-            <button id="addFolderBtn" class="neon-plus"><i class='bx bx-plus'></i></button>
+            
+            <div style="display: flex; gap: 10px; align-items: center;">
+                <button id="pasteBtn" style="display: none; background: #6366f1; border: none; color: white; padding: 6px 12px; border-radius: 8px; cursor: pointer; font-weight: bold;">Paste</button>
+                <button id="selectBtn" style="background: transparent; border: 1px solid #6366f1; color: white; padding: 6px 12px; border-radius: 8px; cursor: pointer;">Select</button>
+                <button id="addFolderBtn" class="neon-plus"><i class='bx bx-plus'></i></button>
+            </div>
         </div>
 
         <div class="file-grid" id="fileGrid">
             </div>
 
         <input type="file" id="fileInput" hidden multiple>
+        
+        <div id="actionBar" style="display: none; position: fixed; bottom: 90px; left: 50%; transform: translateX(-50%); background: #1e1e24; border: 1px solid #333; padding: 12px 24px; border-radius: 16px; z-index: 100; gap: 20px; box-shadow: 0 10px 30px rgba(0,0,0,0.8);">
+            <button onclick="handleAction('copy')" style="background: none; border: none; color: white; cursor: pointer; display: flex; flex-direction: column; align-items: center; gap: 4px;"><i class='bx bx-copy' style="font-size: 20px;"></i> <span style="font-size: 12px;">Copy</span></button>
+            <button onclick="handleAction('cut')" style="background: none; border: none; color: white; cursor: pointer; display: flex; flex-direction: column; align-items: center; gap: 4px;"><i class='bx bx-cut' style="font-size: 20px;"></i> <span style="font-size: 12px;">Cut</span></button>
+            <button onclick="handleAction('delete')" style="background: none; border: none; color: #ef4444; cursor: pointer; display: flex; flex-direction: column; align-items: center; gap: 4px;"><i class='bx bx-trash' style="font-size: 20px;"></i> <span style="font-size: 12px;">Delete</span></button>
+        </div>
     </main>
 
     <div class="bottom-dock-container">
