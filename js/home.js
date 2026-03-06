@@ -35,14 +35,39 @@ ctxMenu.style.cssText = "position:absolute; background:#1e1e24; border:1px solid
 document.body.appendChild(ctxMenu);
 let ctxTargetItem = null;
 
+// Hide menu on tap outside
 document.addEventListener('click', () => { ctxMenu.style.display = 'none'; });
+document.addEventListener('touchstart', (e) => { 
+    if(!e.target.closest('.item-box') && !ctxMenu.contains(e.target)) {
+        ctxMenu.style.display = 'none'; 
+    }
+});
+
+// Helper: Open File/Folder Menu
+function openItemMenu(x, y, item) {
+    ctxTargetItem = item;
+    ctxMenu.innerHTML = `
+        <button style="background:none; border:none; color:white; padding:8px 15px; text-align:left; cursor:pointer; width:100%; border-radius:4px;" onmouseover="this.style.background='#333'" onmouseout="this.style.background='none'" onclick="handleCtxAction('copy')">Copy</button>
+        <button style="background:none; border:none; color:white; padding:8px 15px; text-align:left; cursor:pointer; width:100%; border-radius:4px;" onmouseover="this.style.background='#333'" onmouseout="this.style.background='none'" onclick="handleCtxAction('cut')">Cut</button>
+        <button style="background:none; border:none; color:#ef4444; padding:8px 15px; text-align:left; cursor:pointer; width:100%; border-radius:4px;" onmouseover="this.style.background='#333'" onmouseout="this.style.background='none'" onclick="handleCtxAction('delete')">Delete</button>
+    `;
+    ctxMenu.style.left = x + 'px'; ctxMenu.style.top = y + 'px'; ctxMenu.style.display = 'flex';
+}
+
+// Helper: Open Paste Menu
+function openPasteMenu(x, y) {
+    ctxMenu.innerHTML = `<button style="background:none; border:none; color:white; padding:8px 15px; text-align:left; cursor:pointer; width:100%; border-radius:4px;" onmouseover="this.style.background='#333'" onmouseout="this.style.background='none'" onclick="handleCtxAction('paste')">Paste</button>`;
+    ctxMenu.style.left = x + 'px';
+    ctxMenu.style.top = y + 'px';
+    ctxMenu.style.display = 'flex';
+}
 
 window.handleCtxAction = async (action) => {
     ctxMenu.style.display = 'none';
     
     if(action === 'copy' || action === 'cut') {
         clipboard = { action, item: ctxTargetItem };
-        alert(`Copied to clipboard! Right-click empty space to paste.`);
+        alert(`Copied to clipboard! Long-press empty space to paste.`);
     } 
     else if(action === 'delete') {
         if(confirm(`Delete "${ctxTargetItem.name}"?`)) {
@@ -67,16 +92,27 @@ window.handleCtxAction = async (action) => {
     }
 };
 
+// Desktop Paste Right-Click
 document.querySelector('.content-area').addEventListener('contextmenu', (e) => {
     if(e.target.closest('.item-box')) return;
     e.preventDefault();
     if(!clipboard) return; 
-    
-    ctxMenu.innerHTML = `<button style="background:none; border:none; color:white; padding:8px 15px; text-align:left; cursor:pointer; width:100%; border-radius:4px;" onmouseover="this.style.background='#333'" onmouseout="this.style.background='none'" onclick="handleCtxAction('paste')">Paste</button>`;
-    ctxMenu.style.left = e.pageX + 'px';
-    ctxMenu.style.top = e.pageY + 'px';
-    ctxMenu.style.display = 'flex';
+    openPasteMenu(e.pageX, e.pageY);
 });
+
+// Mobile Paste Long-Press
+let bgPressTimer;
+document.querySelector('.content-area').addEventListener('touchstart', (e) => {
+    if(e.target.closest('.item-box')) return;
+    bgPressTimer = setTimeout(() => {
+        if(!clipboard) return;
+        const touch = e.touches[0];
+        openPasteMenu(touch.pageX, touch.pageY);
+    }, 600); // Trigger after 600ms
+});
+document.querySelector('.content-area').addEventListener('touchend', () => clearTimeout(bgPressTimer));
+document.querySelector('.content-area').addEventListener('touchmove', () => clearTimeout(bgPressTimer));
+
 
 // --- FETCH & RENDER ---
 async function fetchVaultData() {
@@ -106,16 +142,26 @@ function render() {
             }
         };
 
+        // Desktop Copy/Cut/Delete Right-Click
         box.oncontextmenu = (e) => {
             e.preventDefault(); e.stopPropagation();
-            ctxTargetItem = item;
-            ctxMenu.innerHTML = `
-                <button style="background:none; border:none; color:white; padding:8px 15px; text-align:left; cursor:pointer; width:100%; border-radius:4px;" onmouseover="this.style.background='#333'" onmouseout="this.style.background='none'" onclick="handleCtxAction('copy')">Copy</button>
-                <button style="background:none; border:none; color:white; padding:8px 15px; text-align:left; cursor:pointer; width:100%; border-radius:4px;" onmouseover="this.style.background='#333'" onmouseout="this.style.background='none'" onclick="handleCtxAction('cut')">Cut</button>
-                <button style="background:none; border:none; color:#ef4444; padding:8px 15px; text-align:left; cursor:pointer; width:100%; border-radius:4px;" onmouseover="this.style.background='#333'" onmouseout="this.style.background='none'" onclick="handleCtxAction('delete')">Delete</button>
-            `;
-            ctxMenu.style.left = e.pageX + 'px'; ctxMenu.style.top = e.pageY + 'px'; ctxMenu.style.display = 'flex';
+            openItemMenu(e.pageX, e.pageY, item);
         };
+
+        // Mobile Copy/Cut/Delete Long-Press
+        let pressTimer;
+        box.addEventListener('touchstart', (e) => {
+            pressTimer = setTimeout(() => {
+                const touch = e.touches[0];
+                openItemMenu(touch.pageX, touch.pageY, item);
+                // Try to prevent device's default haptic menu if possible
+                if (window.navigator.vibrate) window.navigator.vibrate(50);
+            }, 600);
+        });
+        box.addEventListener('touchend', () => clearTimeout(pressTimer));
+        box.addEventListener('touchmove', () => clearTimeout(pressTimer));
+        box.addEventListener('touchcancel', () => clearTimeout(pressTimer));
+
         fileGrid.appendChild(box);
     });
 }
@@ -141,7 +187,6 @@ fileInput.onchange = async (e) => {
 backBtn.onclick = () => { currentFolderId = null; viewTitle.innerText = "Main Vault"; backBtn.classList.add('invisible'); render(); };
 
 // --- RECURSIVE FOLDER COPY ENGINE ---
-// This digs into a folder and copies everything inside it
 async function copyFolderContents(oldParentId, newParentId, userId) {
     const { data: children } = await supabaseClient.from('vault_items').select('*').eq('parent', oldParentId);
     
@@ -156,7 +201,6 @@ async function copyFolderContents(oldParentId, newParentId, userId) {
             user_id: userId
         }]).select();
 
-        // If the child we just copied is also a folder, loop again to get its contents!
         if (child.type === 'folder' && newChild) {
             await copyFolderContents(child.id, newChild[0].id, userId);
         }
@@ -168,7 +212,7 @@ const originalOpenModal = window.openModal;
 window.openModal = async (modalId) => {
     originalOpenModal(modalId);
     
-    // UPDATE: Receive Logic
+    // Receive Logic
     if(modalId === 'receiveModal') {
         setTimeout(async () => {
             const senderId = prompt("Enter the Sender's 6-digit ID:");
@@ -203,12 +247,10 @@ window.openModal = async (modalId) => {
                 
                 const targetParent = item.type === 'file' ? receivedFolderId : currentFolderId;
                 
-                // NEW: Use .select() so we know the new ID of the cloned folder
                 const { data: copiedItem } = await supabaseClient.from('vault_items').insert([{
                     name: item.name, type: item.type, parent: targetParent, file_path: item.file_path, user_id: firebaseUid
                 }]).select();
                 
-                // NEW: If it's a folder, run the copy engine to get all its inner files
                 if (item.type === 'folder' && copiedItem) {
                     await copyFolderContents(item.id, copiedItem[0].id, firebaseUid);
                 }
