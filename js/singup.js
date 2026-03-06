@@ -3,7 +3,8 @@ import {
     getAuth,
     createUserWithEmailAndPassword,
     GoogleAuthProvider,
-    signInWithPopup
+    signInWithPopup,
+    updateProfile
 } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
 
 // --- FIREBASE CONFIG ---
@@ -30,29 +31,40 @@ if (form) {
     form.addEventListener("submit", (e) => {
         e.preventDefault();
 
+        // Getting only Username, Email, and Password
+        const username = document.getElementById("username").value;
         const email = document.getElementById("email").value;
         const password = document.getElementById("password").value;
         
-        // Disable button to prevent multiple clicks
         const submitBtn = form.querySelector('button[type="submit"]');
         if(submitBtn) submitBtn.disabled = true;
+        
+        message.style.color = "#cbd5e1";
+        message.innerText = "Creating account...";
 
         createUserWithEmailAndPassword(auth, email, password)
             .then((userCredential) => {
-                console.log("Successfully created user:", userCredential.user);
-                message.style.color = "#4ade80"; // Green
-                message.innerText = "Account created! Taking you to login...";
+                const user = userCredential.user;
                 
-                // Redirect immediately after 1.5 seconds
-                setTimeout(() => {
-                    window.location.href = "login.html";
-                }, 1500);
+                // Attach the username to the Firebase profile
+                updateProfile(user, {
+                    displayName: username
+                }).then(() => {
+                    console.log("Successfully created user:", user.displayName, user.email);
+                    
+                    message.style.color = "#4ade80"; 
+                    message.innerText = "Account created! Taking you to login...";
+                    
+                    // Redirect to login page
+                    setTimeout(() => {
+                        window.location.href = "login.html";
+                    }, 1500);
+                });
             })
             .catch((error) => {
                 console.error("Firebase Auth Error:", error.code, error.message);
-                message.style.color = "#ef4444"; // Red
+                message.style.color = "#ef4444"; 
                 
-                // Friendly error messages
                 if (error.code === 'auth/email-already-in-use') {
                     message.innerText = "An account with this email already exists.";
                 } else if (error.code === 'auth/weak-password') {
@@ -61,7 +73,6 @@ if (form) {
                     message.innerText = error.message; 
                 }
                 
-                // Re-enable button
                 if(submitBtn) submitBtn.disabled = false;
             });
     });
@@ -73,8 +84,7 @@ if (googleBtn) {
     googleBtn.addEventListener("click", () => {
         signInWithPopup(auth, provider)
             .then((result) => {
-                console.log("Google Sign-In Success:", result.user);
-                // Redirecting to login after Google sign up, just like email
+                console.log("Google Sign-In Success:", result.user.displayName);
                 window.location.href = "login.html"; 
             })
             .catch((error) => {

@@ -1,11 +1,18 @@
-// --- SUPABASE INITIALIZATION ---
+// --- SECURITY CHECK ---
+// Grab the Firebase ID we saved during login
+const firebaseUid = localStorage.getItem('firebase_uid');
+if (!firebaseUid) {
+    // If they aren't logged in, kick them back to the login page!
+    window.location.href = "login.html";
+}
+
 // --- SUPABASE INITIALIZATION ---
 const supabaseUrl = 'https://gbpxlfzidziwjbdvxfbb.supabase.co'; 
 const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImdicHhsZnppZHppd2piZHZ4ZmJiIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzI3NDYxMDksImV4cCI6MjA4ODMyMjEwOX0.vjSl7ncV_fLYTTfv2Qzy7D0SqBO4i8TbvtwQvC-iy0Q';
 
 const supabaseClient = supabase.createClient(supabaseUrl, supabaseKey);
 
-// --- USER AUTHENTICATION (Simulated) ---
+// --- USER AUTHENTICATION (The 6-Digit Sharing ID) ---
 let myUserId = localStorage.getItem('dshare_user_id');
 if (!myUserId) {
     myUserId = Math.floor(100000 + Math.random() * 900000).toString();
@@ -54,19 +61,17 @@ window.handleCtxAction = async (action) => {
             await supabaseClient.from('vault_items').update({ parent: currentFolderId }).eq('id', clipboard.item.id);
             clipboard = null; 
         } else if(clipboard.action === 'copy') {
+            // NEW: Added user_id
             await supabaseClient.from('vault_items').insert([{
-                name: clipboard.item.name, type: clipboard.item.type, parent: currentFolderId, file_path: clipboard.item.file_path 
+                name: clipboard.item.name, type: clipboard.item.type, parent: currentFolderId, file_path: clipboard.item.file_path, user_id: firebaseUid
             }]);
         }
         fetchVaultData();
     }
 };
 
-// FIX 1: Paste area is now the entire content area, avoiding empty grid issues
 document.querySelector('.content-area').addEventListener('contextmenu', (e) => {
-    // If clicking on an actual file box, let the file box handle it
     if(e.target.closest('.item-box')) return;
-    
     e.preventDefault();
     if(!clipboard) return; 
     
@@ -76,9 +81,14 @@ document.querySelector('.content-area').addEventListener('contextmenu', (e) => {
     ctxMenu.style.display = 'flex';
 });
 
-// --- FETCH & RENDER ---
+// --- FETCH & RENDER (NOW ISOLATED PER USER) ---
 async function fetchVaultData() {
-    const { data, error } = await supabaseClient.from('vault_items').select('*');
+    // NEW: Only fetch files where user_id matches the logged-in user
+    const { data, error } = await supabaseClient
+        .from('vault_items')
+        .select('*')
+        .eq('user_id', firebaseUid);
+        
     if (!error) { vaultData = data; render(); }
 }
 
@@ -118,7 +128,8 @@ function render() {
 addFolderBtn.onclick = async () => {
     if (currentFolderId === null) {
         const name = prompt("Folder Name:");
-        if (name) { await supabaseClient.from('vault_items').insert([{ name: name, type: 'folder', parent: null }]); fetchVaultData(); }
+        // NEW: Added user_id
+        if (name) { await supabaseClient.from('vault_items').insert([{ name: name, type: 'folder', parent: null, user_id: firebaseUid }]); fetchVaultData(); }
     } else { fileInput.click(); }
 };
 
@@ -127,7 +138,8 @@ fileInput.onchange = async (e) => {
     for (let file of e.target.files) {
         const filePath = `${Date.now()}-${file.name}`;
         const { error } = await supabaseClient.storage.from('vault').upload(filePath, file);
-        if (!error) await supabaseClient.from('vault_items').insert([{ name: file.name, type: 'file', parent: currentFolderId, file_path: filePath }]);
+        // NEW: Added user_id
+        if (!error) await supabaseClient.from('vault_items').insert([{ name: file.name, type: 'file', parent: currentFolderId, file_path: filePath, user_id: firebaseUid }]);
     }
     e.target.value = ''; fetchVaultData();
 };
@@ -139,13 +151,12 @@ const originalOpenModal = window.openModal;
 window.openModal = async (modalId) => {
     originalOpenModal(modalId);
     
-    // UPDATE: Receive Logic using IDs
+    // UPDATE: Receive Logic
     if(modalId === 'receiveModal') {
         setTimeout(async () => {
             const senderId = prompt("Enter the Sender's 6-digit ID:");
             if(!senderId) return closeModal('receiveModal');
             
-            // Look for files sent to ME, from the SENDER
             const { data, error } = await supabaseClient.from('active_shares')
                 .select('*, vault_items(*)')
                 .eq('receiver_id', myUserId)
@@ -157,15 +168,14 @@ window.openModal = async (modalId) => {
                 return;
             }
 
-            // AUTO-FOLDER LOGIC: Check if there are loose files
             let receivedFolderId = null;
             const hasLooseFiles = data.some(share => share.vault_items.type === 'file');
             
             if (hasLooseFiles) {
-                // Create a 'Received Files' folder to dump them in
                 const folderName = `Received from ${senderId}`;
+                // NEW: Added user_id
                 const { data: newFolder } = await supabaseClient.from('vault_items')
-                    .insert([{ name: folderName, type: 'folder', parent: currentFolderId }])
+                    .insert([{ name: folderName, type: 'folder', parent: currentFolderId, user_id: firebaseUid }])
                     .select();
                 receivedFolderId = newFolder[0].id;
             }
@@ -175,15 +185,15 @@ window.openModal = async (modalId) => {
                 const item = share.vault_items;
                 if(!item) continue;
                 
-                // If it's a file, put it in the new folder. If it's a folder, leave it where it is.
                 const targetParent = item.type === 'file' ? receivedFolderId : currentFolderId;
                 
+                // NEW: Added user_id
                 await supabaseClient.from('vault_items').insert([{
-                    name: item.name, type: item.type, parent: targetParent, file_path: item.file_path
+                    name: item.name, type: item.type, parent: targetParent, file_path: item.file_path, user_id: firebaseUid
                 }]);
                 
-                // Log history & delete from active shares so it can't be downloaded twice
-                await supabaseClient.from('transfer_history').insert([{ file_name: item.name, action: 'received' }]);
+                // NEW: Added user_id to history
+                await supabaseClient.from('transfer_history').insert([{ file_name: item.name, action: 'received', user_id: firebaseUid }]);
                 await supabaseClient.from('active_shares').delete().eq('id', share.id);
                 
                 html += `<div style="padding:15px; background:#1e1e24; border-radius:8px; margin-bottom:10px; display:flex; align-items:center; gap:10px;">
@@ -198,7 +208,8 @@ window.openModal = async (modalId) => {
     
     // History Modal
     if(modalId === 'historyModal') {
-        const { data } = await supabaseClient.from('transfer_history').select('*').order('created_at', { ascending: false });
+        // NEW: Only fetch history for the logged-in user
+        const { data } = await supabaseClient.from('transfer_history').select('*').eq('user_id', firebaseUid).order('created_at', { ascending: false });
         const list = document.querySelector('.history-list');
         list.innerHTML = data && data.length ? '' : '<p class="empty-state">No history yet.</p>';
         (data || []).forEach(log => {
@@ -208,7 +219,6 @@ window.openModal = async (modalId) => {
     }
 };
 
-// UPDATE: Send Modal Logic
 window.nextStep = function() {
     const receiverId = document.getElementById('real-pin').value;
     if (receiverId.length === 6) {
@@ -219,7 +229,6 @@ window.nextStep = function() {
         const list = document.querySelector('.file-selection-list');
         list.innerHTML = '';
         
-        // FIX 2: Correctly pull items exactly as they appear in the current view
         const items = vaultData.filter(item => item.parent === currentFolderId);
         
         if(items.length === 0) {
@@ -242,7 +251,6 @@ window.nextStep = function() {
     }
 }
 
-// UPDATE: Send Now Button Event 
 document.addEventListener('DOMContentLoaded', () => {
     const sendBtn = document.querySelector('.modal-action-btn.success');
     if(sendBtn) {
@@ -258,13 +266,13 @@ document.addEventListener('DOMContentLoaded', () => {
                 const itemId = cb.value;
                 const item = vaultData.find(i => i.id === itemId);
                 
-                // Add to active shares targeting the Receiver ID
                 await supabaseClient.from('active_shares').insert([{ 
                     sender_id: myUserId, 
                     receiver_id: receiverId, 
                     item_id: itemId 
                 }]);
-                await supabaseClient.from('transfer_history').insert([{ file_name: item.name, action: 'sent' }]);
+                // NEW: Added user_id to history
+                await supabaseClient.from('transfer_history').insert([{ file_name: item.name, action: 'sent', user_id: firebaseUid }]);
             }
             
             alert(`Success! Files sent to User ID: ${receiverId}`);

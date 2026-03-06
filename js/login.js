@@ -25,9 +25,10 @@ document.getElementById("loginBtn").onclick = () => {
     const password = document.getElementById("password").value;
 
     signInWithEmailAndPassword(auth, email, password)
-        .then(() => {
+        .then((userCredential) => {
             console.log("Email login successful!");
-            // Redirect to home page
+            // NEW: Save the Firebase User ID to the browser
+            localStorage.setItem('firebase_uid', userCredential.user.uid);
             window.location.href = "home.html"; 
         })
         .catch((error) => {
@@ -43,7 +44,8 @@ document.getElementById("googleLogin").onclick = () => {
     signInWithPopup(auth, provider)
         .then((result) => {
             console.log("Google login successful for:", result.user.email);
-            // Redirect to home page after successful Google login
+            // NEW: Save the Firebase User ID to the browser
+            localStorage.setItem('firebase_uid', result.user.uid);
             window.location.href = "home.html"; 
         })
         .catch((error) => {
